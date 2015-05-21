@@ -1,20 +1,21 @@
-(function() {
+var Model = require('../src/model');
+var Collection = require('../src/collection');
+
+describe ("Collection", function() {
 
   var a, b, c, d, e, col, otherCol;
 
-  module("Backbone.Collection", {
-
-    setup: function() {
-      a         = new Backbone.Model({id: 3, label: 'a'});
-      b         = new Backbone.Model({id: 2, label: 'b'});
-      c         = new Backbone.Model({id: 1, label: 'c'});
-      d         = new Backbone.Model({id: 0, label: 'd'});
-      e         = null;
-      col       = new Backbone.Collection([a,b,c,d]);
-      otherCol  = new Backbone.Collection();
-    }
-
+  before(function() {
+    a         = new Model({id: 3, label: 'a'});
+    b         = new Model({id: 2, label: 'b'});
+    c         = new Model({id: 1, label: 'c'});
+    d         = new Model({id: 0, label: 'd'});
+    e         = null;
+    col       = new Collection([a,b,c,d]);
+    otherCol  = new Collection();
   });
+
+  return;
 
   test("new and sort", 6, function() {
     var counter = 0;
@@ -1620,4 +1621,4 @@
     collection.invoke('method', 1, 2, 3);
   });
 
-})();
+});

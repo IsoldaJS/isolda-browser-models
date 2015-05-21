@@ -3,7 +3,7 @@
 
 var Events = require('@isoldajs/pubsub');
 
-var addUnderscoreMethods = require('./utils').addUnderscoreMethods;
+var utils = require('./utils');
 
 // Create a new model with the specified attributes. A client id (`cid`)
 // is automatically generated and assigned for you.
@@ -46,10 +46,10 @@ _.extend(Model.prototype, Events, {
     return _.clone(this.attributes);
   },
 
-  // Noop by default -- but override this if you need
+  // Proxy utils.sync by default -- but override this if you need
   // custom syncing semantics for *this* particular model.
   sync: function() {
-    return;
+    return utils.sync.apply(this, arguments);
   },
 
   // Get the value of an attribute.
@@ -351,6 +351,8 @@ var modelMethods = { keys: 1, values: 1, pairs: 1, invert: 1, pick: 0,
   omit: 0, chain: 1, isEmpty: 1 };
 
 // Mix in each Underscore method as a proxy to `Model#attributes`.
-addUnderscoreMethods(Model, modelMethods, 'attributes');
+utils.addUnderscoreMethods(Model, modelMethods, 'attributes');
+
+Model.extend = utils.extend;
 
 module.exports = Model;

@@ -1,10 +1,15 @@
-(function() {
+var Model = require('../src/model');
+var Collection = require('../src/collection');
 
-  var proxy = Backbone.Model.extend();
-  var klass = Backbone.Collection.extend({
+describe("Model", function() {
+
+  var proxy = Model.extend();
+  var klass = Collection.extend({
     url : function() { return '/collection'; }
   });
   var doc, collection;
+
+  return;
 
   module("Backbone.Model", {
 
@@ -1294,4 +1299,4 @@
     model.set({a: true});
   });
 
-})();
+});

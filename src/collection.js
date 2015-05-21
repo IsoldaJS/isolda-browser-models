@@ -11,7 +11,7 @@
 var Events = require('@isoldajs/pubsub');
 
 var Model = require('./model');
-var addUnderscoreMethods = require('./utils').addUnderscoreMethods;
+var utils = require('./utils');
 
 // Create a new **Collection**, perhaps to contain a specific type of `model`.
 // If a `comparator` is specified, the Collection will maintain
@@ -46,9 +46,9 @@ _.extend(Collection.prototype, Events, {
     return this.map(function(model){ return model.toJSON(options); });
   },
 
-  // Proxy `Backbone.sync` by default.
+  // Proxy `utils.sync` by default.
   sync: function() {
-    return Backbone.sync.apply(this, arguments);
+    return utils.sync.apply(this, arguments);
   },
 
   // Add a model, or list of models to the set.
@@ -421,7 +421,7 @@ var collectionMethods = { forEach: 3, each: 3, map: 3, collect: 3, reduce: 4,
     isEmpty: 1, chain: 1, sample: 3, partition: 3 };
 
 // Mix in each Underscore method as a proxy to `Collection#models`.
-addUnderscoreMethods(Collection, collectionMethods, 'models');
+utils.addUnderscoreMethods(Collection, collectionMethods, 'models');
 
 // Underscore methods that take a property name as an argument.
 var attributeMethods = ['groupBy', 'countBy', 'sortBy', 'indexBy'];
@@ -436,5 +436,7 @@ _.each(attributeMethods, function(method) {
     return _[method](this.models, iterator, context);
   };
 });
+
+Collection.extend = utils.extend;
 
 module.exports = Collection;
