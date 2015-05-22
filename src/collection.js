@@ -1,12 +1,11 @@
-// Backbone.Collection
-// -------------------
-
-// If models tend to represent a single row of data, a Backbone Collection is
+// If models tend to represent a single row of data, a Collection is
 // more analogous to a table full of data ... or a small slice or page of that
 // table, or a collection of rows that belong together for a particular reason
 // -- all of the messages in this particular folder, all of the documents
 // belonging to this particular author, and so on. Collections maintain
 // indexes of their models, both in order, and for lookup by `id`.
+
+var _ = require('lodash');
 
 var Events = require('@isoldajs/pubsub');
 
@@ -48,7 +47,7 @@ _.extend(Collection.prototype, Events, {
 
   // Proxy `utils.sync` by default.
   sync: function() {
-    return utils.sync.apply(this, arguments);
+    return sync.sync.apply(this, arguments);
   },
 
   // Add a model, or list of models to the set.
@@ -278,7 +277,7 @@ _.extend(Collection.prototype, Events, {
       if (success) success.call(options.context, collection, resp, options);
       collection.trigger('sync', collection, resp, options);
     };
-    wrapError(this, options);
+    utils.wrapError(this, options);
     return this.sync('read', this, options);
   },
 

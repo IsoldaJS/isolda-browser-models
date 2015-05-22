@@ -1,9 +1,10 @@
 // Model
 // --------------
-
+var _ = require('lodash');
 var Events = require('@isoldajs/pubsub');
 
 var utils = require('./utils');
+var sync = require('./sync');
 
 // Create a new model with the specified attributes. A client id (`cid`)
 // is automatically generated and assigned for you.
@@ -49,7 +50,7 @@ _.extend(Model.prototype, Events, {
   // Proxy utils.sync by default -- but override this if you need
   // custom syncing semantics for *this* particular model.
   sync: function() {
-    return utils.sync.apply(this, arguments);
+    return sync.sync.apply(this, arguments);
   },
 
   // Get the value of an attribute.
@@ -206,7 +207,7 @@ _.extend(Model.prototype, Events, {
       if (success) success.call(options.context, model, resp, options);
       model.trigger('sync', model, resp, options);
     };
-    wrapError(this, options);
+    utils.wrapError(this, options);
     return this.sync('read', this, options);
   },
 
@@ -257,7 +258,7 @@ _.extend(Model.prototype, Events, {
       if (success) success.call(options.context, model, resp, options);
       model.trigger('sync', model, resp, options);
     };
-    wrapError(this, options);
+    utils.wrapError(this, options);
 
     method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
     if (method === 'patch' && !options.attrs) options.attrs = attrs;
@@ -293,7 +294,7 @@ _.extend(Model.prototype, Events, {
     if (this.isNew()) {
       _.defer(options.success);
     } else {
-      wrapError(this, options);
+      utils.wrapError(this, options);
       xhr = this.sync('delete', this, options);
     }
     if (!wait) destroy();

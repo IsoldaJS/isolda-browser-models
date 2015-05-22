@@ -53,7 +53,7 @@ exports.extend = function(protoProps, staticProps) {
   // `parent` constructor function.
   var Surrogate = function(){ this.constructor = child; };
   Surrogate.prototype = parent.prototype;
-  child.prototype = new Surrogate;
+  child.prototype = new Surrogate();
 
   // Add prototype properties (instance properties) to the subclass,
   // if supplied.
@@ -66,8 +66,16 @@ exports.extend = function(protoProps, staticProps) {
   return child;
 };
 
-// Default sync is noop, override
+// Throw an error when a URL is needed, and none is supplied.
+exports.urlError = function() {
+  throw new Error('A "url" property or function must be specified');
+};
 
-exports.sync = function () {
-  console.warn('Sync is not defined; override it in your code.');
+// Wrap an optional error callback with a fallback error event.
+exports.wrapError = function(model, options) {
+  var error = options.error;
+  options.error = function(resp) {
+    if (error) error.call(options.context, model, resp, options);
+    model.trigger('error', model, resp, options);
+  };
 };
