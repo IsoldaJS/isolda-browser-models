@@ -6,3 +6,7 @@ var sync = require('./sync');
 exports.setSync = function (fn) {
   sync.sync = fn;
 };
+
+exports.getSync = function (fn) {
+  return sync.sync;
+};

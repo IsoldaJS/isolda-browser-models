@@ -2,7 +2,7 @@ var _ = require('lodash');
 
 var utils = require('./utils');
 
-var ajax = require('@isolda/browser-ajax');
+var ajax = require('@isoldajs/browser-ajax');
 
 // Map from CRUD to HTTP
 var methodMap = {
@@ -82,3 +82,11 @@ module.exports = sync = function(method, model, options) {
 
 sync.emulateHTTP = false;
 sync.emulateJSON = false;
+
+sync.getAjax = function () {
+  return ajax;
+};
+
+sync.setAjax = function (fn) {
+  ajax = fn;
+};

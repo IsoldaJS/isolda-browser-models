@@ -307,7 +307,7 @@ _.extend(Model.prototype, Events, {
     var base =
       _.result(this, 'urlRoot') ||
       _.result(this.collection, 'url') ||
-      urlError();
+      utils.urlError();
     if (this.isNew()) return base;
     var id = this.id || this.attributes[this.idAttribute];
     return base.replace(/([^\/])$/, '$1/') + encodeURIComponent(id);
