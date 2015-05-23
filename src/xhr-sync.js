@@ -2,7 +2,7 @@ var _ = require('lodash');
 
 var utils = require('./utils');
 
-var ajax = function () {}; // TODO: require from isolda-browser-ajax
+var ajax = require('@isolda/browser-ajax');
 
 // Map from CRUD to HTTP
 var methodMap = {

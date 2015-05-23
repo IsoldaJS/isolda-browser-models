@@ -4,7 +4,8 @@
   "author": "Eugene Mirotin <emirotin@gmail.com>",
   "dependencies": {
     "lodash": "^3.9.1",
-    "@isoldajs/pubsub": "https://github.com/IsoldaJS/isolda-pubsub#master"
+    "@isoldajs/pubsub": "https://github.com/IsoldaJS/isolda-pubsub#master",
+    "@isoldajs/browser-ajax": "https://github.com/IsoldaJS/isolda-browser-ajax#master"
   },
   "devDependencies": {
     "karma": "^0.12.31",
@@ -15,7 +16,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "mocha ./node_modules/karma/bin/karma start"
+    "test": "./node_modules/karma/bin/karma start"
   },
   "version": "1.0.0",
   "license": "MIT",
