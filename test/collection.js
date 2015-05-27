@@ -480,12 +480,14 @@ describe ("Collection", function() {
   });
 
   it("fetch with an error response triggers an error event", function () {
+    var count = 0;
     var collection = new Collection();
     collection.on('error', function () {
-      assert.ok(true);
+      count += 1;
     });
     collection.sync = function (method, model, options) { options.error(); };
     collection.fetch();
+    assert.equal(count, 1);
   });
 
   it("should fix jashkenas/backbone#3283 - fetch with an error response calls error with context", function () {
@@ -746,6 +748,7 @@ describe ("Collection", function() {
   });
 
   it("should fix jashkenas/backbone#861, adding models to a collection which do not pass validation, with validate:true", function() {
+    var count = 0;
     var AModel = Model.extend({
       validate: function(attrs) {
         if (attrs.id == 3) return "id can't be 3";
@@ -757,15 +760,17 @@ describe ("Collection", function() {
     });
 
     var collection = new ACollection();
-    collection.on("invalid", function() { assert.ok(true); });
+    collection.on("invalid", function() { count += 1; });
 
     collection.add([{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}], {validate:true});
     assert.deepEqual(collection.pluck("id"), [1, 2, 4, 5, 6]);
+    assert.equal(count, 1);
   });
 
   it("Invalid models are discarded with validate:true.", function() {
+    var count = 0;
     var collection = new Collection();
-    collection.on('test', function() { assert.ok(true); });
+    collection.on('test', function() { count += 1; });
     collection.model = Model.extend({
       validate: function(attrs){ if (!attrs.valid) return 'invalid'; }
     });
@@ -776,6 +781,7 @@ describe ("Collection", function() {
     assert.ok(collection.get(1));
     assert.ok(!collection.get(2));
     assert.equal(collection.length, 1);
+    assert.equal(count, 1);
   });
 
   it("multiple copies of the same model", function() {
@@ -889,11 +895,13 @@ describe ("Collection", function() {
   });
 
   it("should fix jashkenas/backbone#1447 - create with wait adds model.", function() {
+    var count = 0;
     var collection = new Collection;
     var model = new Model;
     model.sync = function(method, model, options){ options.success(); };
-    collection.on('add', function(){ assert.ok(true); });
+    collection.on('add', function(){ count += 1; });
     collection.create(model, {wait: true});
+    assert.equal(count, 1);
   });
 
   it("should fix jashkenas/backbone#1448 - add sorts collection after merge.", function() {
@@ -958,14 +966,16 @@ describe ("Collection", function() {
   });
 
   it("`sort` shouldn't always fire on `add`", function() {
+    var count = 0;
     var c = new Collection([{id: 1}, {id: 2}, {id: 3}], {
       comparator: 'id'
     });
-    c.sort = function(){ assert.ok(true); };
+    c.sort = function(){ count += 1; };
     c.add([]);
     c.add({id: 1});
     c.add([{id: 2}, {id: 3}]);
     c.add({id: 4});
+    assert.equal(count, 1);
   });
 
   it("should fix jashkenas/backbone#1407 parse option on constructor parses collection and models", function() {
@@ -1261,31 +1271,35 @@ describe ("Collection", function() {
   });
 
   it("`add` only `sort`s when necessary", function () {
+    var count = 0;
     var collection = new (Collection.extend({
       comparator: 'a'
     }))([{id: 1}, {id: 2}, {id: 3}]);
-    collection.on('sort', function () { assert.ok(true); });
+    collection.on('sort', function () { count += 1; });
     collection.add({id: 4}); // do sort, new model
     collection.add({id: 1, a: 1}, {merge: true}); // do sort, comparator change
     collection.add({id: 1, b: 1}, {merge: true}); // don't sort, no comparator change
     collection.add({id: 1, a: 1}, {merge: true}); // don't sort, no comparator change
     collection.add(collection.models); // don't sort, nothing new
     collection.add(collection.models, {merge: true}); // don't sort
+    assert.equal(count, 2);
   });
 
   it("`add` only `sort`s when necessary with comparator function", function () {
+    var count = 0;
     var collection = new (Collection.extend({
       comparator: function(a, b) {
         return a.get('a') > b.get('a') ? 1 : (a.get('a') < b.get('a') ? -1 : 0);
       }
     }))([{id: 1}, {id: 2}, {id: 3}]);
-    collection.on('sort', function () { assert.ok(true); });
+    collection.on('sort', function () { count += 1; });
     collection.add({id: 4}); // do sort, new model
     collection.add({id: 1, a: 1}, {merge: true}); // do sort, model change
     collection.add({id: 1, b: 1}, {merge: true}); // do sort, model change
     collection.add({id: 1, a: 1}, {merge: true}); // don't sort, no model change
     collection.add(collection.models); // don't sort, nothing new
     collection.add(collection.models, {merge: true}); // don't sort
+    assert.equal(count, 3);
   });
 
   it("Attach options to collection.", function() {
@@ -1543,26 +1557,30 @@ describe ("Collection", function() {
   });
 
   it('#3199 - Order changing should trigger a sort', function() {
-      var one = new Model({id: 1});
-      var two = new Model({id: 2});
-      var three = new Model({id: 3});
-      var collection = new Collection([one, two, three]);
-      collection.on('sort', function() {
-        assert.ok(true);
-      });
-      collection.set([{id: 3}, {id: 2}, {id: 1}]);
-  });
-
-  it('#3199 - Adding a model should trigger a sort', function() {
+    var count = 0; 
     var one = new Model({id: 1});
     var two = new Model({id: 2});
     var three = new Model({id: 3});
     var collection = new Collection([one, two, three]);
     collection.on('sort', function() {
-      assert.ok(true);
+      count += 1;
+    });
+    collection.set([{id: 3}, {id: 2}, {id: 1}]);
+    assert.equal(count, 1);
+  });
+
+  it('#3199 - Adding a model should trigger a sort', function() {
+    var count = 0;
+    var one = new Model({id: 1});
+    var two = new Model({id: 2});
+    var three = new Model({id: 3});
+    var collection = new Collection([one, two, three]);
+    collection.on('sort', function() {
+      count += 1;
     });
     collection.set([{id: 3}, {id: 2}, {id: 1}, {id: 0}]);
-  })
+    assert.equal(count, 1);
+  });
 
   it('#3199 - Order not changing should not trigger a sort', function() {
     var one = new Model({id: 1});
@@ -1589,15 +1607,19 @@ describe ("Collection", function() {
   });
   
   it("adding multiple models triggers `set` event once", function() {
+    var count = 0;
     var collection = new Collection;
-    collection.on('update', function() { assert.ok(true); });
+    collection.on('update', function() { count += 1; });
     collection.add([{id: 1}, {id: 2}, {id: 3}]);
+    assert.equal(count, 1);
   });
 
   it("removing models triggers `set` event once", function() {
+    var count = 0;
     var collection = new Collection([{id: 1}, {id: 2}, {id: 3}]);
-    collection.on('update', function() { assert.ok(true); });
+    collection.on('update', function() { count += 1; });
     collection.remove([{id: 1}, {id: 2}]);
+    assert.equal(count, 1);
   });
 
   it("remove does not trigger `set` when nothing removed", function() {
@@ -1607,9 +1629,11 @@ describe ("Collection", function() {
   });
 
   it("set triggers `set` event once", function() {
+    var count = 0;
     var collection = new Collection([{id: 1}, {id: 2}]);
-    collection.on('update', function() { assert.ok(true); });
+    collection.on('update', function() { count += 1; });
     collection.set([{id: 1}, {id: 3}]);
+    assert.equal(count, 1);
   });
 
   it("set does not trigger `set` event when nothing added nor removed", function() {
