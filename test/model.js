@@ -26,7 +26,7 @@ describe("Model", function() {
 
   afterEach(function () {
     require('./_util').restoreSync();
-  })
+  });
 
   it("should call `initialize`", function() {
     var AModel = Model.extend({
