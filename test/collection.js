@@ -24,7 +24,7 @@ describe ("Collection", function() {
     require('./_util').restoreSync();
   });
 
-  it("new and sort", function() {
+  it("should support `new` and `sort`", function() {
     var counter = 0;
     col.on('sort', function(){ counter++; });
     assert.deepEqual(col.pluck('label'), ['a', 'b', 'c', 'd']);
@@ -41,7 +41,7 @@ describe ("Collection", function() {
     assert.equal(col.length, 4);
   });
 
-  it("String comparator.", function() {
+  it("should support string comparator", function() {
     var collection = new Collection([
       {id: 3},
       {id: 1},
@@ -50,7 +50,7 @@ describe ("Collection", function() {
     assert.deepEqual(collection.pluck('id'), [1, 2, 3]);
   });
 
-  it("new and parse", function() {
+  it("should support `new` and `parse`", function() {
     var ACollection = Collection.extend({
       parse : function(data) {
         return _.filter(data, function(datum) {
@@ -65,7 +65,7 @@ describe ("Collection", function() {
     assert.strictEqual(collection.last().get('a'), 4);
   });
 
-  it("clone preserves model and comparator", function() {
+  it("clone should preserve `model` and `comparator`", function() {
     var AModel = Model.extend();
     var comparator = function(model){ return model.id; };
 
@@ -79,7 +79,7 @@ describe ("Collection", function() {
     assert.strictEqual(collection.comparator, comparator);
   });
 
-  it("get", function() {
+  it("should support `get`", function() {
     assert.equal(col.get(0), d);
     assert.equal(col.get(d.clone()), d);
     assert.equal(col.get(2), b);
@@ -88,7 +88,7 @@ describe ("Collection", function() {
     assert.equal(col.get(col.first().cid), col.first());
   });
 
-  it("get with non-default ids", function() {
+  it("should support `get` with non-default ids", function() {
     var MongoModel = Model.extend({idAttribute: '_id'});
     var model = new MongoModel({_id: 100});
     var col = new Collection([model], {model: MongoModel});
@@ -103,12 +103,12 @@ describe ("Collection", function() {
     assert.equal(col2.get(model.clone()), col2.first());
   });
 
-  it('get with "undefined" id', function() {
+  it('should support `get` with "undefined" id', function() {
     var collection = new Collection([{id: 1}, {id: 'undefined'}]);
     assert.equal(collection.get(1).id, 1);
   });
 
-  it("update index when id changes", function() {
+  it("should update index when id changes", function() {
     var col = new Collection();
     col.add([
       {id : 0, name : 'one'},
@@ -122,16 +122,16 @@ describe ("Collection", function() {
     assert.equal(col.get(101).get('name'), 'dalmatians');
   });
 
-  it("at", function() {
+  it("should support `at`", function() {
     assert.equal(col.at(2), c);
     assert.equal(col.at(-2), c);
   });
 
-  it("pluck", function() {
+  it("should support `pluck`", function() {
     assert.equal(col.pluck('label').join(' '), 'a b c d');
   });
 
-  it("add", function() {
+  it("should support `add`", function() {
     var added, opts, secondAdded;
     added = opts = secondAdded = null;
     e = new Model({id: 10, label : 'e'});
@@ -174,7 +174,7 @@ describe ("Collection", function() {
     assert.equal(addCount, 7);
   });
 
-  it("add multiple models", function() {
+  it("should allow adding multiple models", function() {
     var col = new Collection([{at: 0}, {at: 1}, {at: 9}]);
     col.add([{at: 2}, {at: 3}, {at: 4}, {at: 5}, {at: 6}, {at: 7}, {at: 8}], {at: 2});
     for (var i = 0; i <= 5; i++) {
@@ -182,7 +182,7 @@ describe ("Collection", function() {
     }
   });
 
-  it("add; at should have preference over comparator", function() {
+  it("`add` should support `at` with preference over comparator", function() {
     var Col = Collection.extend({
       comparator: function(a,b) {
         return a.id > b.id ? -1 : 1;
@@ -195,19 +195,19 @@ describe ("Collection", function() {
     assert.equal(col.pluck('id').join(' '), '3 1 2');
   });
 
-  it("can't add model to collection twice", function() {
+  it("shouldn't add model to collection twice", function() {
     var col = new Collection([{id: 1}, {id: 2}, {id: 1}, {id: 2}, {id: 3}]);
     assert.equal(col.pluck('id').join(' '), '1 2 3');
   });
 
-  it("can't add different model with same id to collection twice", function() {
+  it("shouldn't add different model with same id to collection twice", function() {
     var col = new Collection();
     col.unshift({id: 101});
     col.add({id: 101});
     assert.equal(col.length, 1);
   });
 
-  it("merge in duplicate models with {merge: true}", function() {
+  it("should support `merge` in duplicate models with {merge: true}", function() {
     var col = new Collection();
     col.add([{id: 1, name: 'Moe'}, {id: 2, name: 'Curly'}, {id: 3, name: 'Larry'}]);
     col.add({id: 1, name: 'Moses'});
@@ -218,7 +218,7 @@ describe ("Collection", function() {
     assert.equal(col.first().get('name'), 'Tim');
   });
 
-  it("add model to multiple collections", function() {
+  it("should allow adding model to multiple collections", function() {
     var counter = 0;
     var e = new Model({id: 10, label : 'e'});
     e.on('add', function(model, collection) {
@@ -246,7 +246,7 @@ describe ("Collection", function() {
     assert.equal(e.collection, colE);
   });
 
-  it("add model with parse", function() {
+  it("should support adding model with `parse`", function() {
     var AModel = Model.extend({
       parse: function(obj) {
         obj.value += 1;
@@ -260,7 +260,7 @@ describe ("Collection", function() {
     assert.equal(col.at(0).get('value'), 2);
   });
 
-  it("add with parse and merge", function() {
+  it("should support adding with `parse` and `merge`", function() {
     var collection = new Collection();
     collection.parse = function(attrs) {
       return _.map(attrs, function(model) {
@@ -273,7 +273,7 @@ describe ("Collection", function() {
     assert.equal(collection.first().get('name'), 'Alf');
   });
 
-  it("add model to collection with sort()-style comparator", function() {
+  it("should allow adding model with sort()-style comparator", function() {
     var col = new Collection();
     col.comparator = function(a, b) {
       return a.get('name') < b.get('name') ? -1 : 1;
@@ -289,7 +289,7 @@ describe ("Collection", function() {
     assert.equal(col.indexOf(tom), 2);
   });
 
-  it("comparator that depends on `this`", function() {
+  it("should support comparator that depends on `this`", function() {
     var col = new Collection();
     col.negative = function(num) {
       return -num;
@@ -306,7 +306,7 @@ describe ("Collection", function() {
     assert.deepEqual(col.pluck('id'), [1, 2, 3]);
   });
 
-  it("remove", function() {
+  it("should support `remove`", function() {
     var removed = null;
     var otherRemoved = null;
     var result = null;
@@ -328,7 +328,7 @@ describe ("Collection", function() {
     assert.equal(otherRemoved, null);
   });
 
-  it("add and remove return values", function() {
+  it("`add` and `remove` should support return values", function() {
     var Even = Model.extend({
       validate: function(attrs) {
         if (attrs.id % 2 !== 0) return "odd";
@@ -361,20 +361,20 @@ describe ("Collection", function() {
     assert.equal(list[1], null);
   });
 
-  it("shift and pop", function() {
+  it("should support `shift` and `pop`", function() {
     var col = new Collection([{a: 'a'}, {b: 'b'}, {c: 'c'}]);
     assert.equal(col.shift().get('a'), 'a');
     assert.equal(col.pop().get('c'), 'c');
   });
 
-  it("slice", function() {
+  it("should support `slice`", function() {
     var col = new Collection([{a: 'a'}, {b: 'b'}, {c: 'c'}]);
     var array = col.slice(1, 3);
     assert.equal(array.length, 2);
     assert.equal(array[0].get('b'), 'b');
   });
 
-  it("events are unbound on remove", function() {
+  it("events should be unbound on `remove`", function() {
     var counter = 0;
     var dj = new Model();
     var emcees = new Collection([dj]);
@@ -387,7 +387,7 @@ describe ("Collection", function() {
     assert.equal(counter, 1);
   });
 
-  it("remove in multiple collections", function() {
+  it("should support removing in multiple collections", function() {
     var modelData = {
       id : 5,
       title : 'Othello'
@@ -411,7 +411,7 @@ describe ("Collection", function() {
     assert.equal(passed, true);
   });
 
-  it("remove same model in multiple collection", function() {
+  it("should support removing same model in multiple collection", function() {
     var counter = 0;
     var e = new Model({id: 5, title: 'Othello'});
     e.on('remove', function(model, collection) {
@@ -445,7 +445,7 @@ describe ("Collection", function() {
     assert.equal(counter, 2);
   });
 
-  it("model destroy removes from all collections", function() {
+  it("model destroy should remove from all collections", function() {
     var e = new Model({id: 5, title: 'Othello'});
     e.sync = function(method, model, options) { options.success(); };
     var colE = new Collection([e]);
@@ -456,7 +456,7 @@ describe ("Collection", function() {
     assert.equal(undefined, e.collection);
   });
 
-  it("Colllection: non-persisted model destroy removes from all collections", function() {
+  it("non-persisted model destroy should remove from all collections", function() {
     var e = new Model({title: 'Othello'});
     e.sync = function(method, model, options) { throw "should not be called"; };
     var colE = new Collection([e]);
@@ -467,7 +467,7 @@ describe ("Collection", function() {
     assert.equal(undefined, e.collection);
   });
 
-  it("fetch", function() {
+  it("should support `fetch`", function() {
     var collection = new Collection;
     collection.url = '/';
     collection.fetch();
@@ -479,7 +479,7 @@ describe ("Collection", function() {
     assert.equal(this.syncArgs.options.parse, false);
   });
 
-  it("fetch with an error response triggers an error event", function () {
+  it("`fetch` with an error response should trigger an error event", function () {
     var count = 0;
     var collection = new Collection();
     collection.on('error', function () {
@@ -505,8 +505,8 @@ describe ("Collection", function() {
     collection.fetch(options);
   });
 
-  it("ensure fetch only parses once", function() {
-    var collection = new Collection;
+  it("fetch should only parse once", function() {
+    var collection = new Collection();
     var counter = 0;
     collection.parse = function(models) {
       counter++;
@@ -518,8 +518,8 @@ describe ("Collection", function() {
     assert.equal(counter, 1);
   });
 
-  it("create", function() {
-    var collection = new Collection;
+  it("should support `create`", function() {
+    var collection = new Collection();
     collection.url = '/test';
     var model = collection.create({label: 'f'}, {wait: true});
     assert.equal(this.syncArgs.method, 'create');
@@ -528,7 +528,7 @@ describe ("Collection", function() {
     assert.equal(model.collection, collection);
   });
 
-  it("create with validate:true enforces validation", function() {
+  it("create with validate:true should enforce validation", function() {
     var ValidatingModel = Model.extend({
       validate: function(attrs) {
         return "fail";
@@ -545,7 +545,7 @@ describe ("Collection", function() {
     assert.equal(col.create({"foo":"bar"}, {validate:true}), false);
   });
 
-  it("create will pass extra options to success callback", function () {
+  it("`create` should pass extra options to success callback", function () {
     var AModel = Model.extend({
       sync: function (method, model, options) {
         _.extend(options, {specialSync: true});
@@ -566,10 +566,9 @@ describe ("Collection", function() {
 
     collection.create({}, {success: success});
     this.ajaxSettings.success();
-
   });
 
-  it("a failing create returns model with errors", function() {
+  it("a failing `create` should return model with errors", function() {
     var ValidatingModel = Model.extend({
       validate: function(attrs) {
         return "fail";
@@ -584,7 +583,7 @@ describe ("Collection", function() {
     assert.equal(col.length, 1);
   });
 
-  it("initialize", function() {
+  it("should support `initialize`", function() {
     var ACollection = Collection.extend({
       initialize: function() {
         this.one = 1;
@@ -594,11 +593,11 @@ describe ("Collection", function() {
     assert.equal(coll.one, 1);
   });
 
-  it("toJSON", function() {
+  it("should support `toJSON`", function() {
     assert.equal(JSON.stringify(col), '[{"id":3,"label":"a"},{"id":2,"label":"b"},{"id":1,"label":"c"},{"id":0,"label":"d"}]');
   });
 
-  it("where and findWhere", function() {
+  it("should support `where` and `findWhere`", function() {
     var model = new Model({a: 1});
     var coll = new Collection([
       model,
@@ -617,7 +616,7 @@ describe ("Collection", function() {
     assert.equal(coll.findWhere({a: 4}), void 0);
   });
 
-  it("Underscore methods", function() {
+  it("should support lodash methods", function() {
     assert.equal(col.map(function(model){ return model.get('label'); }).join(' '), 'a b c d');
     assert.equal(col.any(function(model){ return model.id === 100; }), false);
     assert.equal(col.any(function(model){ return model.id === 0; }), true);
@@ -641,7 +640,7 @@ describe ("Collection", function() {
     assert.ok(col.indexBy('id')[first.id] === first);
   });
 
-  it("reset", function() {
+  it("should support `reset`", function() {
     var resetCount = 0;
     var models = col.models;
     col.on('reset', function() { resetCount += 1; });
@@ -672,20 +671,20 @@ describe ("Collection", function() {
     assert.equal(resetCount, 6);
   });
 
-  it("reset with different values", function(){
+  it("should support `reset` with different values", function(){
     var col = new Collection({id: 1});
     col.reset({id: 1, a: 1});
     assert.equal(col.get(1).get('a'), 1);
   });
 
-  it("same references in reset", function() {
+  it("should keep same references in `reset`", function() {
     var model = new Model({id: 1});
     var collection = new Collection({id: 1});
     collection.reset(model);
     assert.equal(collection.get(1), model);
   });
 
-  it("reset passes caller options", function() {
+  it("`reset` should pass caller options", function() {
     var AModel = Model.extend({
       initialize: function(attrs, options) {
         this.model_parameter = options.model_parameter;
@@ -699,7 +698,7 @@ describe ("Collection", function() {
     });
   });
 
-  it("reset does not alter options by reference", function() {
+  it("`reset` should not alter options by reference", function() {
     var col = new Collection([{id:1}]);
     var origOpts = {};
     col.on("reset", function(col, opts){
@@ -709,14 +708,14 @@ describe ("Collection", function() {
     col.reset([], origOpts);
   });
 
-  it("trigger custom events on models", function() {
+  it("should support triggering custom events on models", function() {
     var fired = null;
     a.on("custom", function() { fired = true; });
     a.trigger("custom");
     assert.equal(fired, true);
   });
 
-  it("add does not alter arguments", function(){
+  it("`add` should not alter arguments", function(){
     var attrs = {};
     var models = [attrs];
     new Collection().add(models);
@@ -767,7 +766,7 @@ describe ("Collection", function() {
     assert.equal(count, 1);
   });
 
-  it("Invalid models are discarded with validate:true.", function() {
+  it("invalid models shluld be discarded with validate:true.", function() {
     var count = 0;
     var collection = new Collection();
     collection.on('test', function() { count += 1; });
@@ -784,7 +783,7 @@ describe ("Collection", function() {
     assert.equal(count, 1);
   });
 
-  it("multiple copies of the same model", function() {
+  it("should allow multiple copies of the same model", function() {
     var col = new Collection();
     var model = new Model();
     col.add([model, model]);
@@ -807,7 +806,7 @@ describe ("Collection", function() {
     assert.ok(c.at(0) instanceof AModel);
   });
 
-  it("null and undefined are invalid ids.", function() {
+  it("should treat `null` and `undefined` as invalid ids.", function() {
     var model = new Model({id: 1});
     var collection = new Collection([model]);
     model.set({id: null});
@@ -817,7 +816,7 @@ describe ("Collection", function() {
     assert.ok(!collection.get('undefined'));
   });
 
-  it("falsy comparator", function(){
+  it("should support falsy comparator", function(){
     var Col = Collection.extend({
       comparator: function(model){ return model.id; }
     });
@@ -951,7 +950,7 @@ describe ("Collection", function() {
     assert.deepEqual(added, [1, 2]);
   });
 
-  it("fetch parses models by default", function() {
+  it("`fetch` should parse models by default", function() {
     var model = {};
     var ACollection = Collection.extend({
       url: 'test',
@@ -1021,8 +1020,7 @@ describe ("Collection", function() {
     assert.equal(c.at(0).get('name'), 'test');
   });
 
-
-  it("Reset includes previous models in triggered event.", function() {
+  it("`reset` should include previous models in triggered event.", function() {
     var model = new Model();
     var collection = new Collection([model])
     .on('reset', function(collection, options) {
@@ -1031,7 +1029,7 @@ describe ("Collection", function() {
     collection.reset([]);
   });
 
-  it("set", function() {
+  it("should support `set`", function() {
     var m1 = new Model();
     var m2 = new Model({id: 2});
     var m3 = new Model();
@@ -1078,7 +1076,7 @@ describe ("Collection", function() {
     assert.strictEqual(c.length, 0);
   });
 
-  it("set with only cids", function() {
+  it("should support `set` with only cids", function() {
     var m1 = new Model;
     var m2 = new Model;
     var c = new Collection;
@@ -1090,7 +1088,7 @@ describe ("Collection", function() {
     assert.equal(c.length, 2);
   });
 
-  it("set with only idAttribute", function() {
+  it("should support `set` with only `idAttribute`", function() {
     var m1 = { _id: 1 };
     var m2 = { _id: 2 };
     var col = Collection.extend({
@@ -1107,7 +1105,7 @@ describe ("Collection", function() {
     assert.equal(c.length, 2);
   });
 
-  it("set + merge with default values defined", function() {
+  it("should support `set` + `merge` with default values defined", function() {
     var AModel = Model.extend({
       defaults: {
         key: 'value'
@@ -1125,7 +1123,7 @@ describe ("Collection", function() {
     assert.equal(col.length, 1);
   });
 
-  it('merge without mutation', function () {
+  it('should support `merge` without mutation', function () {
     var AModel = Model.extend({
       initialize: function (attrs, options) {
         if (attrs.child) {
@@ -1143,7 +1141,7 @@ describe ("Collection", function() {
     assert.deepEqual(collection.pluck('id'), [2, 1]);
   });
 
-  it("`set` and model level `parse`", function() {
+  it("should support `set` and model level `parse`", function() {
     var AModel = Model.extend({});
     var ACollection = Collection.extend({
       model: AModel,
@@ -1158,7 +1156,7 @@ describe ("Collection", function() {
     assert.equal(collection.first(), model);
   });
 
-  it("`set` data is only parsed once", function() {
+  it("`set` data ishould only be parsed once", function() {
     var collection = new Collection();
     collection.model = Model.extend({
       parse: function (data) {
@@ -1170,7 +1168,7 @@ describe ("Collection", function() {
     collection.set({}, {parse: true});
   });
 
-  it('`set` matches input order in the absence of a comparator', function () {
+  it('`set` should match input order in the absence of a comparator', function () {
     var one = new Model({id: 1});
     var two = new Model({id: 2});
     var three = new Model({id: 3});
@@ -1204,7 +1202,7 @@ describe ("Collection", function() {
     assert.ok(model2.cid == model1.cid);
   });
 
-  it("`set` with non-normal id", function() {
+  it("should support `set` with non-normal id", function() {
     var ACollection = Collection.extend({
       model: Model.extend({idAttribute: '_id'})
     });
@@ -1251,7 +1249,7 @@ describe ("Collection", function() {
     browserModels.setAjax(ajax);
   });
 
-  it("fetch will pass extra options to success callback", function () {
+  it("fetch should pass extra options to success callback", function () {
     var SpecialSyncCollection = Collection.extend({
       url: '/test',
       sync: function (method, collection, options) {
@@ -1270,7 +1268,7 @@ describe ("Collection", function() {
     this.ajaxSettings.success();
   });
 
-  it("`add` only `sort`s when necessary", function () {
+  it("`add` should only `sort` when necessary", function () {
     var count = 0;
     var collection = new (Collection.extend({
       comparator: 'a'
@@ -1285,7 +1283,7 @@ describe ("Collection", function() {
     assert.equal(count, 2);
   });
 
-  it("`add` only `sort`s when necessary with comparator function", function () {
+  it("`add` should only `sort` when necessary with comparator function", function () {
     var count = 0;
     var collection = new (Collection.extend({
       comparator: function(a, b) {
@@ -1302,7 +1300,7 @@ describe ("Collection", function() {
     assert.equal(count, 3);
   });
 
-  it("Attach options to collection.", function() {
+  it("should attach options to collection.", function() {
     var comparator = function(){};
 
     var collection = new Collection([], {
@@ -1314,7 +1312,7 @@ describe ("Collection", function() {
     assert.ok(collection.comparator === comparator);
   });
 
-  it("`add` overrides `set` flags", function () {
+  it("`add` should override `set` flags", function () {
     var collection = new Collection();
     collection.once('add', function (model, collection, options) {
       collection.add({id: 2}, options);
@@ -1416,7 +1414,7 @@ describe ("Collection", function() {
     assert.equal(job.items.get(2).subItems.get(3).get('subName'), 'NewThree');
   });
 
-  it('_addReference binds all collection events & adds to the lookup hashes', function() {
+  it("_addReference should bind all collection events & adds to the lookup hashes", function() {
 
     var calls = {add: 0, remove: 0};
 
@@ -1450,7 +1448,7 @@ describe ("Collection", function() {
 
   });
 
-  it('Do not allow duplicate models to be `add`ed or `set`', function() {
+  it("should not allow duplicate models to be `add`ed or `set`", function() {
     var c = new Collection();
 
     c.add([{id: 1}, {id: 1}]);
@@ -1462,14 +1460,14 @@ describe ("Collection", function() {
     assert.equal(c.models.length, 1);
   });
 
-  it('#3020: #set with {add: false} should not throw.', function() {
+  it("should fix jashkenas/backbone#3020 - `set` with {add: false} should not throw", function() {
     var collection = new Collection;
     collection.set([{id: 1}], {add: false});
     assert.strictEqual(collection.length, 0);
     assert.strictEqual(collection.models.length, 0);
   });
 
-  it("create with wait, model instance, #3028", function() {
+  it("should fix jashkenas/backbone #3028 - `create` with `wait`, model instance", function() {
     var collection = new Collection();
     var model = new Model({id: 1});
     model.sync = function(){
@@ -1478,7 +1476,7 @@ describe ("Collection", function() {
     collection.create(model, {wait: true});
   });
 
-  it("modelId", function() {
+  it("should support `modelId`", function() {
     var Stooge = Model.extend();
     var StoogeCollection = Collection.extend({model: Stooge});
 
@@ -1488,7 +1486,7 @@ describe ("Collection", function() {
     assert.equal(StoogeCollection.prototype.modelId({_id: 1}), 1);
   });
 
-  it('Polymorphic models work with "simple" constructors', function () {
+  it("polymorphic models should work with 'simple' constructors", function () {
     var A = Model.extend();
     var B = Model.extend();
     var C = Collection.extend({
@@ -1504,7 +1502,7 @@ describe ("Collection", function() {
     assert.equal(collection.at(1).id, 2);
   });
 
-  it('Polymorphic models work with "advanced" constructors', function () {
+  it("polymorphic models should work with 'advanced' constructors", function () {
     var A = Model.extend({idAttribute: '_id'});
     var B = Model.extend({idAttribute: '_id'});
     var C = Collection.extend({
@@ -1556,7 +1554,7 @@ describe ("Collection", function() {
     col.add([{at: 1}, {at: 2}]);
   });
 
-  it('#3199 - Order changing should trigger a sort', function() {
+  it("should fix jashkenas/backbone#3199 - Order changing should trigger a sort", function() {
     var count = 0; 
     var one = new Model({id: 1});
     var two = new Model({id: 2});
@@ -1569,7 +1567,7 @@ describe ("Collection", function() {
     assert.equal(count, 1);
   });
 
-  it('#3199 - Adding a model should trigger a sort', function() {
+  it("should fix jashkenas/backbone#3199 - Adding a model should trigger a sort", function() {
     var count = 0;
     var one = new Model({id: 1});
     var two = new Model({id: 2});
@@ -1582,7 +1580,7 @@ describe ("Collection", function() {
     assert.equal(count, 1);
   });
 
-  it('#3199 - Order not changing should not trigger a sort', function() {
+  it("should fix jashkenas/backbone#3199 - Order not changing should not trigger a sort", function() {
     var one = new Model({id: 1});
     var two = new Model({id: 2});
     var three = new Model({id: 3});
@@ -1593,7 +1591,7 @@ describe ("Collection", function() {
     collection.set([{id: 1}, {id: 2}, {id: 3}]);
   });
 
-  it("add supports negative indexes", function() {
+  it("`add` should support negative indexes", function() {
     var collection = new Collection([{id: 1}]);
     collection.add([{id: 2}, {id: 3}], {at: -1});
     collection.add([{id: 2.5}], {at: -2});
@@ -1606,7 +1604,7 @@ describe ("Collection", function() {
     assert.deepEqual(collection.pluck('id'), [1, 3, 2]);
   });
   
-  it("adding multiple models triggers `set` event once", function() {
+  it("adding multiple models should trigger `set` event once", function() {
     var count = 0;
     var collection = new Collection;
     collection.on('update', function() { count += 1; });
@@ -1614,7 +1612,7 @@ describe ("Collection", function() {
     assert.equal(count, 1);
   });
 
-  it("removing models triggers `set` event once", function() {
+  it("removing models should trigger `set` event once", function() {
     var count = 0;
     var collection = new Collection([{id: 1}, {id: 2}, {id: 3}]);
     collection.on('update', function() { count += 1; });
@@ -1622,13 +1620,13 @@ describe ("Collection", function() {
     assert.equal(count, 1);
   });
 
-  it("remove does not trigger `set` when nothing removed", function() {
+  it("remove should not trigger `set` when nothing removed", function() {
     var collection = new Collection([{id: 1}, {id: 2}]);
     collection.on('update', function() { throw new Error("This should not be called"); });
     collection.remove([{id: 3}]);
   });
 
-  it("set triggers `set` event once", function() {
+  it("`set` should trigger `set` event once", function() {
     var count = 0;
     var collection = new Collection([{id: 1}, {id: 2}]);
     collection.on('update', function() { count += 1; });
@@ -1636,7 +1634,7 @@ describe ("Collection", function() {
     assert.equal(count, 1);
   });
 
-  it("set does not trigger `set` event when nothing added nor removed", function() {
+  it("`set` should not trigger `set` event when nothing added nor removed", function() {
     var collection = new Collection([{id: 1}, {id: 2}]);
     collection.on('update', function() { throw new Error("This should not be called"); });
     collection.set([{id: 1}, {id: 2}]);
