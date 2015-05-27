@@ -10,3 +10,7 @@ exports.setSync = function (fn) {
 exports.getSync = function (fn) {
   return sync.sync;
 };
+
+var defaultSync = require('./xhr-sync');
+exports.getAjax = defaultSync.getAjax;
+exports.setAjax = defaultSync.setAjax;

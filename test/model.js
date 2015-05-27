@@ -1,7 +1,6 @@
 var assert = require('assert');
 var _ = require('lodash');
 
-var browserModels = require('..');
 var Model = require('../src/model');
 var Collection = require('../src/collection');
 
@@ -22,22 +21,12 @@ describe("Model", function() {
     collection = new klass();
     collection.add(doc);
 
-    var env = this;
-
-    require('../src/xhr-sync').setAjax(function (settings) {
-      env.ajaxSettings = settings;
-    });
-
-    var sync = browserModels.getSync();
-    browserModels.setSync(function(method, model, options) {
-      env.syncArgs = {
-        method: method,
-        model: model,
-        options: options
-      };
-      sync.apply(this, arguments);
-    });
+    require('./_util').setupSync(this);
   });
+
+  afterEach(function () {
+    require('./_util').restoreSync();
+  })
 
   it("should call `initialize`", function() {
     var AModel = Model.extend({

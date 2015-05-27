@@ -11,6 +11,7 @@ var Events = require('@isoldajs/pubsub');
 
 var Model = require('./model');
 var utils = require('./utils');
+var sync = require('./sync');
 
 // Create a new **Collection**, perhaps to contain a specific type of `model`.
 // If a `comparator` is specified, the Collection will maintain
