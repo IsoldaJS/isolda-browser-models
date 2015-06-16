@@ -4,8 +4,8 @@
   "author": "Eugene Mirotin <emirotin@gmail.com>",
   "dependencies": {
     "lodash": "^3.9.1",
-    "@isoldajs/pubsub": "https://github.com/IsoldaJS/isolda-pubsub#master",
-    "@isoldajs/browser-ajax": "https://github.com/IsoldaJS/isolda-browser-ajax#master"
+    "@isoldajs/pubsub": "^1.0.0",
+    "@isoldajs/browser-ajax": "^1.0.0"
   },
   "devDependencies": {
     "karma": "^0.12.31",
