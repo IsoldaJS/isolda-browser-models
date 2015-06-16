@@ -1,1 +1,1 @@
-module.exports = require('./src/browser-models');
+module.exports = require('./src');
