@@ -2,7 +2,15 @@ var _ = require('lodash');
 
 var utils = require('./utils');
 
-var ajax = require('@isoldajs/browser-ajax');
+var ajax;
+if (typeof XMLHttpRequest !== 'undefined') {
+  ajax = require('@isoldajs/browser-ajax');
+} else {
+  ajax = function () {
+    console.warn("AJAX function not implemented, sync won't happen");
+  }
+}
+
 
 // Map from CRUD to HTTP
 var methodMap = {
