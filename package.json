@@ -8,15 +8,20 @@
     "@isoldajs/browser-ajax": "^1.0.0"
   },
   "devDependencies": {
+    "browserify": "^10.2.4",
     "karma": "^0.12.31",
     "karma-browserify": "^4.1.2",
     "karma-mocha": "^0.1.10",
     "karma-phantomjs-launcher": "^0.1.4",
-    "mocha": "^2.2.5"
+    "mocha": "^2.2.5",
+    "uglify-js": "^2.4.23"
   },
   "main": "index.js",
   "scripts": {
-    "test": "mocha && ./node_modules/karma/bin/karma start"
+    "test": "mocha && ./node_modules/karma/bin/karma start",
+    "bundle": "browserify --standalone Models index.js -o dist/isolda-models.js",
+    "minify": "uglifyjs dist/isolda-models.js --compress dead_code=true,unsafe=true,unused=true --mangle -o dist/isolda-models.min.js",
+    "build": "npm run bundle && npm run minify"
   },
   "version": "1.0.0",
   "license": "MIT",

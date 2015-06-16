@@ -412,7 +412,7 @@ _.extend(Collection.prototype, Events, {
 
 });
 
-// Underscore methods that we want to implement on the Collection.
+// Lodash methods that we want to implement on the Collection.
 // 90% of the core usefulness of Backbone Collections is actually implemented
 // right here:
 var collectionMethods = { forEach: 3, each: 3, map: 3, collect: 3, reduce: 4,
@@ -423,10 +423,10 @@ var collectionMethods = { forEach: 3, each: 3, map: 3, collect: 3, reduce: 4,
     without: 0, difference: 0, indexOf: 3, shuffle: 1, lastIndexOf: 3,
     isEmpty: 1, chain: 1, sample: 3, partition: 3 };
 
-// Mix in each Underscore method as a proxy to `Collection#models`.
-utils.addUnderscoreMethods(Collection, collectionMethods, 'models');
+// Mix in each Lodash method as a proxy to `Collection#models`.
+utils.addLodashMethods(Collection, collectionMethods, 'models');
 
-// Underscore methods that take a property name as an argument.
+// Lodash methods that take a property name as an argument.
 var attributeMethods = ['groupBy', 'countBy', 'sortBy', 'indexBy'];
 
 // Use attributes instead of properties.

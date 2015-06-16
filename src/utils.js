@@ -3,7 +3,7 @@ _ = require('lodash');
 var array = [];
 var slice = array.slice;
 
-// Proxy Underscore methods to a class' prototype using a
+// Proxy Lodash methods to a class' prototype using a
 // particular attribute as the data argument
 var addMethod = function(length, method, attribute) {
   switch (length) {
@@ -27,7 +27,7 @@ var addMethod = function(length, method, attribute) {
   }
 };
 
-exports.addUnderscoreMethods = function(Class, methods, attribute) {
+exports.addLodashMethods = function(Class, methods, attribute) {
   _.each(methods, function(length, method) {
     if (_[method]) Class.prototype[method] = addMethod(length, method, attribute);
   });

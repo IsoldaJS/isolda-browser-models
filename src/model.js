@@ -69,7 +69,7 @@ _.extend(Model.prototype, Events, {
     return this.get(attr) != null;
   },
 
-  // Special-cased proxy to underscore's `_.matches` method.
+  // Special-cased proxy to Lodash's `_.matches` method.
   matches: function(attrs) {
     return !!_.iteratee(attrs, this)(this.attributes);
   },
@@ -347,12 +347,12 @@ _.extend(Model.prototype, Events, {
 
 });
 
-// Underscore methods that we want to implement on the Model.
+// Lodash methods that we want to implement on the Model.
 var modelMethods = { keys: 1, values: 1, pairs: 1, invert: 1, pick: 0,
   omit: 0, chain: 1, isEmpty: 1 };
 
-// Mix in each Underscore method as a proxy to `Model#attributes`.
-utils.addUnderscoreMethods(Model, modelMethods, 'attributes');
+// Mix in each Lodash method as a proxy to `Model#attributes`.
+utils.addLodashMethods(Model, modelMethods, 'attributes');
 
 Model.extend = utils.extend;
 
