@@ -1,5 +1,5 @@
-var Model = exports.model = require('./model');
-var Collection = exports.collection = require('./collection');
+exports.model = require('./model');
+exports.collection = require('./collection');
 
 var sync = require('./sync');
 

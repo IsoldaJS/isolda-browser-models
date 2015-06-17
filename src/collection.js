@@ -1,9 +1,11 @@
-// If models tend to represent a single row of data, a Collection is
-// more analogous to a table full of data ... or a small slice or page of that
-// table, or a collection of rows that belong together for a particular reason
-// -- all of the messages in this particular folder, all of the documents
-// belonging to this particular author, and so on. Collections maintain
-// indexes of their models, both in order, and for lookup by `id`.
+/*
+  If models tend to represent a single row of data, a Collection is
+  more analogous to a table full of data ... or a small slice or page of that
+  table, or a collection of rows that belong together for a particular reason
+  -- all of the messages in this particular folder, all of the documents
+  belonging to this particular author, and so on. Collections maintain
+  indexes of their models, both in order, and for lookup by `id`.
+*/
 
 var _ = require('lodash');
 
@@ -16,9 +18,11 @@ var sync = require('./sync');
 var array = [];
 var slice = array.slice;
 
-// Create a new **Collection**, perhaps to contain a specific type of `model`.
-// If a `comparator` is specified, the Collection will maintain
-// its models in sort order, as they're added and removed.
+/*
+  Create a new **Collection**, perhaps to contain a specific type of `model`.
+  If a `comparator` is specified, the Collection will maintain
+  its models in sort order, as they're added and removed.
+*/
 var Collection = function(models, options) {
   options || (options = {});
   if (options.model) this.model = options.model;
@@ -35,7 +39,7 @@ var addOptions = {add: true, remove: false};
 // Define the Collection's inheritable methods.
 _.extend(Collection.prototype, Events, {
 
-  // The default model for a collection is just a **Backbone.Model**.
+  // The default model for a collection is just a **Model**.
   // This should be overridden in most cases.
   model: Model,
 
@@ -413,8 +417,7 @@ _.extend(Collection.prototype, Events, {
 });
 
 // Lodash methods that we want to implement on the Collection.
-// 90% of the core usefulness of Backbone Collections is actually implemented
-// right here:
+// 90% of the core usefulness of Collections is actually implemented right here:
 var collectionMethods = { forEach: 3, each: 3, map: 3, collect: 3, reduce: 4,
     foldl: 4, inject: 4, reduceRight: 4, foldr: 4, find: 3, detect: 3, filter: 3,
     select: 3, reject: 3, every: 3, all: 3, some: 3, any: 3, include: 2,

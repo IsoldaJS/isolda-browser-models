@@ -15030,12 +15030,14 @@ function uniqueId(prefix) {
 module.exports = uniqueId;
 
 },{"../internal/baseToString":22}],60:[function(require,module,exports){
-// If models tend to represent a single row of data, a Collection is
-// more analogous to a table full of data ... or a small slice or page of that
-// table, or a collection of rows that belong together for a particular reason
-// -- all of the messages in this particular folder, all of the documents
-// belonging to this particular author, and so on. Collections maintain
-// indexes of their models, both in order, and for lookup by `id`.
+/*
+  If models tend to represent a single row of data, a Collection is
+  more analogous to a table full of data ... or a small slice or page of that
+  table, or a collection of rows that belong together for a particular reason
+  -- all of the messages in this particular folder, all of the documents
+  belonging to this particular author, and so on. Collections maintain
+  indexes of their models, both in order, and for lookup by `id`.
+*/
 
 var _ = require('lodash');
 
@@ -15048,9 +15050,11 @@ var sync = require('./sync');
 var array = [];
 var slice = array.slice;
 
-// Create a new **Collection**, perhaps to contain a specific type of `model`.
-// If a `comparator` is specified, the Collection will maintain
-// its models in sort order, as they're added and removed.
+/*
+  Create a new **Collection**, perhaps to contain a specific type of `model`.
+  If a `comparator` is specified, the Collection will maintain
+  its models in sort order, as they're added and removed.
+*/
 var Collection = function(models, options) {
   options || (options = {});
   if (options.model) this.model = options.model;
@@ -15067,7 +15071,7 @@ var addOptions = {add: true, remove: false};
 // Define the Collection's inheritable methods.
 _.extend(Collection.prototype, Events, {
 
-  // The default model for a collection is just a **Backbone.Model**.
+  // The default model for a collection is just a **Model**.
   // This should be overridden in most cases.
   model: Model,
 
@@ -15445,8 +15449,7 @@ _.extend(Collection.prototype, Events, {
 });
 
 // Lodash methods that we want to implement on the Collection.
-// 90% of the core usefulness of Backbone Collections is actually implemented
-// right here:
+// 90% of the core usefulness of Collections is actually implemented right here:
 var collectionMethods = { forEach: 3, each: 3, map: 3, collect: 3, reduce: 4,
     foldl: 4, inject: 4, reduceRight: 4, foldr: 4, find: 3, detect: 3, filter: 3,
     select: 3, reject: 3, every: 3, all: 3, some: 3, any: 3, include: 2,
@@ -15455,8 +15458,8 @@ var collectionMethods = { forEach: 3, each: 3, map: 3, collect: 3, reduce: 4,
     without: 0, difference: 0, indexOf: 3, shuffle: 1, lastIndexOf: 3,
     isEmpty: 1, chain: 1, sample: 3, partition: 3 };
 
-// Mix in each Underscore method as a proxy to `Collection#models`.
-utils.addUnderscoreMethods(Collection, collectionMethods, 'models');
+// Mix in each Lodash method as a proxy to `Collection#models`.
+utils.addLodashMethods(Collection, collectionMethods, 'models');
 
 // Lodash methods that take a property name as an argument.
 var attributeMethods = ['groupBy', 'countBy', 'sortBy', 'indexBy'];
@@ -15477,8 +15480,8 @@ Collection.extend = utils.extend;
 module.exports = Collection;
 
 },{"./model":62,"./sync":63,"./utils":64,"@isoldajs/pubsub":4,"lodash":13}],61:[function(require,module,exports){
-var Model = exports.model = require('./model');
-var Collection = exports.collection = require('./collection');
+exports.model = require('./model');
+exports.collection = require('./collection');
 
 var sync = require('./sync');
 
@@ -15566,7 +15569,7 @@ _.extend(Model.prototype, Events, {
     return this.get(attr) != null;
   },
 
-  // Special-cased proxy to underscore's `_.matches` method.
+  // Special-cased proxy to Lodash's `_.matches` method.
   matches: function(attrs) {
     return !!_.iteratee(attrs, this)(this.attributes);
   },
@@ -15844,12 +15847,12 @@ _.extend(Model.prototype, Events, {
 
 });
 
-// Underscore methods that we want to implement on the Model.
+// Lodash methods that we want to implement on the Model.
 var modelMethods = { keys: 1, values: 1, pairs: 1, invert: 1, pick: 0,
   omit: 0, chain: 1, isEmpty: 1 };
 
-// Mix in each Underscore method as a proxy to `Model#attributes`.
-utils.addUnderscoreMethods(Model, modelMethods, 'attributes');
+// Mix in each Lodash method as a proxy to `Model#attributes`.
+utils.addLodashMethods(Model, modelMethods, 'attributes');
 
 Model.extend = utils.extend;
 
@@ -15866,7 +15869,7 @@ _ = require('lodash');
 var array = [];
 var slice = array.slice;
 
-// Proxy Underscore methods to a class' prototype using a
+// Proxy Lodash methods to a class' prototype using a
 // particular attribute as the data argument
 var addMethod = function(length, method, attribute) {
   switch (length) {
@@ -15890,7 +15893,7 @@ var addMethod = function(length, method, attribute) {
   }
 };
 
-exports.addUnderscoreMethods = function(Class, methods, attribute) {
+exports.addLodashMethods = function(Class, methods, attribute) {
   _.each(methods, function(length, method) {
     if (_[method]) Class.prototype[method] = addMethod(length, method, attribute);
   });

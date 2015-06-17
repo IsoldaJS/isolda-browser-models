@@ -1,6 +1,6 @@
 {
   "name": "@isoldajs/browser-models",
-  "description": "A stand-alone client-side (mainly browser) Model and Collection implementation based on Backbone.",
+  "description": "A stand-alone Model and Collection implementation based on Backbone.",
   "author": "Eugene Mirotin <emirotin@gmail.com>",
   "dependencies": {
     "lodash": "^3.9.1",
