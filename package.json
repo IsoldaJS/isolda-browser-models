@@ -1,5 +1,5 @@
 {
-  "name": "@isoldajs/browser-models",
+  "name": "@isoldajs/models",
   "description": "A stand-alone Model and Collection implementation based on Backbone.",
   "author": "Eugene Mirotin <emirotin@gmail.com>",
   "dependencies": {
