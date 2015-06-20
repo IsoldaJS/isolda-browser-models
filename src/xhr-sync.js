@@ -74,7 +74,7 @@ module.exports = sync = function(method, model, options) {
     params.processData = false;
   }
 
-  // Pass along `textStatus` and `errorThrown` from jQuery.
+  // Pass along `textStatus` and `errorThrown` from Ajax.
   var error = options.error;
   options.error = function(xhr, textStatus, errorThrown) {
     options.textStatus = textStatus;
