@@ -1,10 +1,23 @@
-This is a stand-alone Model and Collection implementation based on Backbone. `~ 30Kb` minified and gzipped.
+This is a stand-alone Model and Collection implementation originally extracted from Backbone.
+
+`~ 30Kb` minified and gzipped.
 
 It has the full Backbone's test suite ported as well.
 
+## A not on server- and client-side usage
+
+The majority of `Model` and `Collection` functionality is generic which means the library can be used in an isomorphic way. Differences start when it comes to data synchronization.
+
+Internally operations like `Model#save` or `Collection#fetch` run a function called `sync`. Each `Model` and `Collection` can override this function, but when they don't a global one is used.
+
+For the client-side code you usually want to do an AJAX request to the RESTful API, while for the server-side you normally talk to the DB.
+
+The library comes with the default `sync` implementation that does AJAX in the browser (if the `XMLHttpRequest` is available) and no-op in other environments. See the corresponding section in the end of this document for the detailed explanation and overriding instructions.
+When talking about synchronization the following docs reference the default behavior, but remember that you can customize it.
+
 ## Model
 
-Models contain the interactive data as well as a large part of the logic surrounding it: conversions, validations, computed properties, and access control. You extend **Model** with your domain-specific methods, and **Model** provides a basic set of functionality for managing changes.
+Models contain the interactive data as well as a large part of the logic surrounding it: conversions, validations, computed properties, and access control. You extend `Model` with your domain-specific methods, and `Model` provides a basic set of functionality for managing changes.
 
 The following is a contrived example, but it demonstrates defining a model with a custom method, setting an attribute, and firing an event keyed to changes in that specific attribute. After running this code once, `sidebar` will be available in your browser's console, so you can play around with it.
 
@@ -791,4 +804,109 @@ var othello = nypl.create({
   title: "Othello",
   author: "William Shakespeare"
 });
+```
+
+## Sync
+
+As explained in the beginning of the document `sync` is the central point of communication with the data layer. For the client-side usage it's often a REST service, while for the server-side normally it's a DB of some kind.
+
+The default `sync` uses `XMLHttpRequest` to make a RESTful JSON request and returns an `XMLHttpRequest` instance. You can override it in order to use a different persistence strategy, such as WebSockets, XML transport, or Local Storage.
+
+The method signature of `sync` is `sync(method, model, [options])`
+
+* `method` – the CRUD method (`"create"`, `"read"`, `"update"`, `"patch"`, or `"delete"`)
+* `model` – the model to be saved (or collection to be read)
+* `options` – success and error callbacks, and all other request options
+
+Whenever a model or collection begins a sync with the server, a `"request"` event is emitted. If the request completes successfully you'll get a `"sync"` event, and an `"error"` event if not.
+
+The `sync` function may be overridden globally with `setSync`, or at a finer-grained level, by adding a `sync` function to a collection or to an individual model.
+
+### getSync `models.getSync`
+
+You can retrieve the currently set global `sync` using the `getSync` method:
+
+```
+var models = require('@isoldajs/models');
+
+var sync = models.getSync();
+```
+
+### setSync `models.setSync`
+
+To override the built-in `sync` call the `setSync` function:
+
+```
+var models = require('@isoldajs/models');
+
+var originalSync = models.getSync();
+
+models.setSync(function(method, model) {
+  alert(method + ": " + JSON.stringify(model));
+  originalSync.apply(null, arguments);
+});
+```
+
+### Default `sync` implementation
+
+With the default implementation, when `sync` sends up a request to save a model, its attributes will be passed, serialized as JSON, and sent in the HTTP body with content-type `application/json`. When returning a JSON response, send down the attributes of the model that have been changed by the server, and need to be updated on the client. When responding to a `"read"` request from a collection (`Collection#fetch`), send down an array of model attribute objects.
+
+The default `sync` handler maps CRUD to REST like so:
+
+* create → POST `/collection`
+* read → GET `/collection[/id]`
+* update → PUT `/collection/id`
+* patch → PATCH `/collection/id`
+* delete → DELETE `/collection/id`
+
+#### getAjax `models.getAjax`
+
+By default if `XMLHttpRequest` is defined in the runtime environment (which is the case for any modern web-browser) the default `sync` function calls the default `ajax` function provided by the [`@isoldajs/browser-ajax` package](https://github.com/IsoldaJS/isolda-browser-ajax).
+
+You can get the currently set `ajax` function with the call to `getAjax`:
+
+```
+var models = require('@isoldajs/models');
+
+var ajax = models.getAjax();
+```
+
+#### setAjax `models.setAjax`
+
+If you want to use a custom AJAX function, or you need to tweak things, you can do so by calling `setAjax`.
+
+```
+var models = require('@isoldajs/models');
+
+var originalAjax = models.getAjax();
+
+models.setAjax(function(options) {
+  alert("AJAX: " + JSON.stringify(options));
+  originalAjax.apply(null, arguments);
+});
+```
+
+#### emulateHTTP `sync.emulateHTTP = true`
+
+If you want to work with a legacy web server that doesn't support default REST/HTTP approach, you may choose to turn on `sync.emulateHTTP` (_note: this is a feature of the default built-in `sync` implementation_). Setting this option will fake `PUT`, `PATCH` and `DELETE` requests with a `HTTP POST`, setting the `X-HTTP-Method-Override` header with the true method. If `emulateJSON` is also on, the true method will be passed as an additional `_method` parameter.
+
+```
+var models = require('@isoldajs/models');
+var sync = models.getSync();
+sync.emulateHTTP = true;
+
+model.save();  // POST to "/collection/id", with `X-HTTP-Method-Override` header.
+```
+
+#### emulateJSON `sync.emulateJSON = true`
+
+If you're working with a legacy web server that can't handle requests encoded as `application/json`, setting `sync.emulateJSON = true` will cause the JSON to be serialized under a `model` parameter, and the request to be made with a `application/x-www-form-urlencoded` MIME type, as if from an HTML form. (_Note: this is a feature of the default built-in `sync` implementation_).
+
+```
+var models = require('@isoldajs/models');
+var sync = models.getSync();
+sync.emulateHTTP = true;
+sync.emulateJSON = true;
+
+model.save();  // POST to "/collection/id", with `X-HTTP-Method-Override` header + "_method=PUT" + data sent as `application/x-www-form-urlencoded`.
 ```
